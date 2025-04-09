@@ -3,7 +3,7 @@ import React from 'react';
 // Remove BrowserRouter import from here if wrapping in main.jsx
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import LoginPage from './pages/loginPage';
+import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
