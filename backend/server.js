@@ -11,23 +11,6 @@ connectDB(); // Connect to MongoDB
 
 const app = express();
 
-// Middleware
-// app.use(cors({
-//     origin: function (origin, callback) {
-//       const allowedOrigins = [
-//         process.env.FRONTEND_URL,
-//         'https://micro-saas-1-frontend.onrender.com' // Optional if you're supporting multiple frontends
-//       ];
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error('Not allowed by CORS'));
-//       }
-//     },
-//     credentials: true, // If using cookies or auth headers (optional)
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow all necessary methods
-//     allowedHeaders: ['Content-Type', 'Authorization'] // Allow common headers
-//   }));
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
