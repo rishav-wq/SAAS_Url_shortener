@@ -12,7 +12,7 @@ connectDB(); // Connect to MongoDB
 const app = express();
 
 app.use(cors({
-    origin: '*',
+    origin: 'https://saas-url-shortener-4esu.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
