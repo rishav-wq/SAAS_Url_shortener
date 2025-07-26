@@ -16,18 +16,18 @@ import { sanitizeInput } from './middleware/validation.js';
 
 dotenv.config(); // Load .env variables
 
-// Export server creation function for Vercel
-export function createServer() {
-  connectDB(); // Connect to MongoDB
+// Connect to MongoDB
+connectDB();
 
-  const app = express();
+const app = express();
 
-  // Create necessary directories (for non-serverless environments)
-  if (!process.env.VERCEL) {
-    const dirs = ['uploads/payment-proofs', 'invoices'];
-    dirs.forEach(dir => {
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+// Create necessary directories
+const dirs = ['uploads/payment-proofs', 'invoices'];
+dirs.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
       }
     });
   }
@@ -49,11 +49,9 @@ export function createServer() {
   app.use(express.json({ limit: '10mb' })); // Limit JSON payload size
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Serve static files (disabled for Vercel)
-  if (!process.env.VERCEL) {
-    app.use('/uploads', express.static('uploads'));
-    app.use('/invoices', express.static('invoices'));
-  }
+  // Serve static files
+  app.use('/uploads', express.static('uploads'));
+  app.use('/invoices', express.static('invoices'));
 
   // Health check routes (no authentication needed)
   app.use('/api', healthRoutes);
@@ -114,18 +112,12 @@ export function createServer() {
       });
   });
 
-  return app;
-}
-
-// For traditional server deployment (non-Vercel)
-if (!process.env.VERCEL) {
-    const app = createServer();
-    const PORT = process.env.PORT || 5001;
-    app.listen(PORT, () => {
-        console.log(`🚀 Server running on port ${PORT}`);
-        if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-            console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-            console.log(`🔒 Security: Enhanced with rate limiting, validation, and monitoring`);
-        }
-    });
-}
+// Start the server
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+        console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+        console.log(`🔒 Security: Enhanced with rate limiting, validation, and monitoring`);
+    }
+});
