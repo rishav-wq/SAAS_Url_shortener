@@ -1,12 +1,13 @@
 import express from 'express';
 import { createLink, getLinks, getLinkStats, getLinkQRCode } from '../controllers/linkController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { validate } from '../middleware/validation.js';
 
 const router = express.Router();
 
 // Apply auth middleware to protected routes
 router.route('/')
-    .post(protect, createLink)
+    .post(protect, validate('createLink'), createLink)
     .get(protect, getLinks);
 
 router.get('/:linkId/stats', protect, getLinkStats);

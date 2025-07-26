@@ -3,6 +3,7 @@ import Click from '../models/click.js';
 import { nanoid } from 'nanoid';
 import useragent from 'useragent';
 import qr from 'qrcode';
+import { generateShortUrl } from '../utils/urlHelper.js';
 
 // --- Helper for Async Click Logging ---
 const logClick = async (linkId, ipAddress, userAgentString) => {
@@ -14,9 +15,13 @@ const logClick = async (linkId, ipAddress, userAgentString) => {
             userAgent: userAgentString,
         });
         await click.save();
-        console.log(`Click logged for linkId: ${linkId}`);
+        if (process.env.NODE_ENV === 'development') {
+            console.log(`Click logged for linkId: ${linkId}`);
+        }
     } catch (error) {
-        console.error(`Error logging click for linkId ${linkId}:`, error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error(`Error logging click for linkId ${linkId}:`, error);
+        }
     }
 };
 
@@ -56,11 +61,15 @@ export const createLink = async (req, res) => {
         });
 
         await newLink.save();
-        const shortUrl = `${req.protocol}://${req.get('host')}/${shortId}`;
+        
+        // Generate short URL using the utility function
+        const shortUrl = generateShortUrl(shortId, req);
 
         res.status(201).json({ ...newLink.toObject(), shortUrl });
     } catch (error) {
-        console.error("Create Link Error:", error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error("Create Link Error:", error);
+        }
         res.status(500).json({ message: 'Server error creating link' });
     }
 };
@@ -100,7 +109,7 @@ export const getLinks = async (req, res) => {
             return {
                 ...link.toObject(),
                 totalClicks: clickData ? clickData.count : 0,
-                shortUrl: `${req.protocol}://${req.get('host')}/${link.shortId}`,
+                shortUrl: generateShortUrl(link.shortId, req),
                 isExpired: link.expiresAt && new Date() > link.expiresAt,
             };
         });
@@ -113,7 +122,9 @@ export const getLinks = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Get Links Error:", error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error("Get Links Error:", error);
+        }
         res.status(500).json({ message: 'Server error fetching links' });
     }
 };
@@ -139,7 +150,9 @@ export const redirectLink = async (req, res) => {
         logClick(link._id, ipAddress, userAgentString);
 
     } catch (error) {
-        console.error("Redirect Error:", error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error("Redirect Error:", error);
+        }
         if (!res.headersSent) {
             res.status(500).send('Server error');
         }
@@ -209,13 +222,15 @@ export const getLinkQRCode = async (req, res) => {
             return res.status(404).json({ message: 'Link not found or not owned by user' });
         }
 
-        const shortUrl = `${req.protocol}://${req.get('host')}/${link.shortId}`;
+        const shortUrl = generateShortUrl(link.shortId, req);
         const qrCodeDataURL = await qr.toDataURL(shortUrl);
 
         res.json({ qrCodeDataURL });
 
     } catch (error) {
-        console.error("QR Code Generation Error:", error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error("QR Code Generation Error:", error);
+        }
         res.status(500).json({ message: 'Server error generating QR code' });
     }
 };

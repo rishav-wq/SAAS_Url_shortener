@@ -12,6 +12,21 @@ const initialState = {
   error: null,
 };
 
+// Async thunk for registration
+export const register = createAsyncThunk(
+  'auth/register',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const { data } = await api.post('/auth/register', userData);
+      localStorage.setItem('userInfo', JSON.stringify(data));
+      return data;
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || 'Registration failed';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 // Async thunk for login action
 export const login = createAsyncThunk(
   'auth/login',
@@ -33,20 +48,35 @@ export const logout = createAsyncThunk('auth/logout', async () => {
     // Optional: Could add an API call here if the backend needs to invalidate the token server-side
 });
 
-
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-     // Potential sync reducers if needed
-     // logout: (state) => {
-     //  localStorage.removeItem('userInfo');
-     //  state.userInfo = null;
-     //  state.error = null;
-     // },
+    clearError: (state) => {
+      state.error = null;
+    },
+    updateUserInfo: (state, action) => {
+      state.userInfo = { ...state.userInfo, ...action.payload };
+      localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
+    }
   },
   extraReducers: (builder) => {
     builder
+      // Register cases
+      .addCase(register.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userInfo = action.payload;
+        state.error = null;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.userInfo = null;
+      })
       // Login cases
       .addCase(login.pending, (state) => {
         state.loading = true;
@@ -71,6 +101,6 @@ const authSlice = createSlice({
   },
 });
 
-// Export reducer and actions
-// export const { logout } = authSlice.actions; // If using sync reducer for logout
+// Export actions and reducer
+export const { clearError, updateUserInfo } = authSlice.actions;
 export default authSlice.reducer;

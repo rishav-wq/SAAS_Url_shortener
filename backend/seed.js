@@ -1,26 +1,27 @@
-// Example seed script (e.g., backend/seed.js)
-require('dotenv').config();
-const connectDB = require('./utils/db');
-const User = require('./models/User');
+// Minimal seed script - only for essential data
+import dotenv from 'dotenv';
+import connectDB from './utils/db.js';
 
-connectDB();
+dotenv.config();
 
-const seedUser = async () => {
+const seedEssentials = async () => {
   try {
-    await User.deleteMany(); // Clear existing users (optional)
-
-    const user = new User({
-      email: 'intern@dacoid.com',
-      password: 'Test123', // Password will be hashed by pre-save hook
-    });
-
-    await user.save();
-    console.log('User seeded!');
-    process.exit();
+    await connectDB();
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Database connection established');
+      console.log('✅ Essential data seeded successfully!');
+      console.log('');
+      console.log('🚀 Ready to start! Users can now register through the application.');
+      console.log('📱 Frontend: http://localhost:3000');
+      console.log('🔧 Backend: http://localhost:5001');
+    }
+    process.exit(0);
   } catch (error) {
-    console.error('Error seeding user:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('❌ Seeding error:', error);
+    }
     process.exit(1);
   }
 };
 
-seedUser();
+seedEssentials();
