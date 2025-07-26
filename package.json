@@ -2,16 +2,14 @@
   "name": "saas-url-shortener",
   "version": "1.0.0",
   "description": "Professional SaaS Link Shortener with Analytics",
-  "main": "api/index.js",
+  "main": "backend/server.js",
   "private": true,
   "engines": {
     "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "echo 'Using pre-built files from dist directory'",
     "start": "node backend/server.js",
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
-    "vercel-build": "echo 'Using pre-built files from dist directory'"
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
   },
   "keywords": ["url-shortener", "saas", "link-management", "analytics"],
   "author": "Your Name",
