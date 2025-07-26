@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Static files ready'",
-  "outputDirectory": "dist",
   "functions": {
     "api/index.js": {
       "runtime": "nodejs18.x"
@@ -14,7 +12,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/dist/$1"
     }
   ],
   "env": {
