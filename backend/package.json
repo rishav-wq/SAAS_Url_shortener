@@ -10,8 +10,7 @@
     "prod": "set NODE_ENV=production && node server.js",
     "seed": "node seed.js",
     "seed-plans": "node seedPlans.js",
-    "build": "echo 'No build step required for Node.js backend'",
-    "deploy-help": "echo '🚀 Deploy Options:' && echo '1. Railway: https://railway.app' && echo '2. Vercel: https://vercel.com' && echo '3. Heroku: https://heroku.com'"
+    "build": "echo 'No build step required for Node.js backend'"
   },
   "keywords": [],
   "author": "",
