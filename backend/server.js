@@ -62,8 +62,26 @@ app.get('/:shortId', accessLimiter, redirectLink);
 
 // Serve static files in production (for Railway deployment)
 if (process.env.NODE_ENV === 'production') {
-    const frontendDistPath = path.join(process.cwd(), '../frontend/dist');
-    if (fs.existsSync(frontendDistPath)) {
+    // Try multiple possible paths for the frontend build
+    const possiblePaths = [
+        path.join(process.cwd(), '../frontend/dist'),
+        path.join(process.cwd(), '../../frontend/dist'),
+        path.join(__dirname, '../frontend/dist'),
+        path.join(__dirname, '../../frontend/dist'),
+        path.resolve('frontend/dist'),
+        path.resolve('../frontend/dist')
+    ];
+    
+    let frontendDistPath = null;
+    for (const testPath of possiblePaths) {
+        if (fs.existsSync(testPath)) {
+            frontendDistPath = testPath;
+            console.log(`✅ Found frontend build at: ${frontendDistPath}`);
+            break;
+        }
+    }
+    
+    if (frontendDistPath) {
         app.use(express.static(frontendDistPath));
         
         // Handle React Router - serve index.html for all non-API routes
@@ -74,6 +92,8 @@ if (process.env.NODE_ENV === 'production') {
             }
             res.sendFile(path.join(frontendDistPath, 'index.html'));
         });
+    } else {
+        console.log('⚠️ Frontend build directory not found. Serving API only.');
     }
 }
 
