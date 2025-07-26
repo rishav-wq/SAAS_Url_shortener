@@ -60,41 +60,10 @@ app.use('/api/payments', paymentRoutes); // Uses general rate limiting
 // This handles the root path with a short ID parameter
 app.get('/:shortId', accessLimiter, redirectLink);
 
-// Serve static files in production (for Railway deployment)
+// API-only deployment - frontend served separately by Vercel
 if (process.env.NODE_ENV === 'production') {
-    // Try multiple possible paths for the frontend build
-    const possiblePaths = [
-        path.join(process.cwd(), '../frontend/dist'),
-        path.join(process.cwd(), '../../frontend/dist'),
-        path.join(__dirname, '../frontend/dist'),
-        path.join(__dirname, '../../frontend/dist'),
-        path.resolve('frontend/dist'),
-        path.resolve('../frontend/dist')
-    ];
-    
-    let frontendDistPath = null;
-    for (const testPath of possiblePaths) {
-        if (fs.existsSync(testPath)) {
-            frontendDistPath = testPath;
-            console.log(`✅ Found frontend build at: ${frontendDistPath}`);
-            break;
-        }
-    }
-    
-    if (frontendDistPath) {
-        app.use(express.static(frontendDistPath));
-        
-        // Handle React Router - serve index.html for all non-API routes
-        app.get('*', (req, res) => {
-            // Skip if it's an API route or shortId redirect
-            if (req.path.startsWith('/api/') || req.path.match(/^\/[a-zA-Z0-9_-]{6}$/)) {
-                return res.status(404).json({ error: 'Route not found' });
-            }
-            res.sendFile(path.join(frontendDistPath, 'index.html'));
-        });
-    } else {
-        console.log('⚠️ Frontend build directory not found. Serving API only.');
-    }
+    console.log('🚀 Backend running in API-only mode for separate frontend deployment');
+    console.log('🌐 Frontend should be deployed to Vercel or similar service');
 }
 
 // Global Error Handling Middleware (enhanced)

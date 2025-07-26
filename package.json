@@ -8,8 +8,11 @@
     "node": ">=18.0.0"
   },
   "scripts": {
+    "build": "cd frontend && npm install && npm run build",
     "start": "node backend/server.js",
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "deploy:frontend": "cd frontend && npm install && npm run build",
+    "deploy:backend": "cd backend && npm install && npm start"
   },
   "keywords": ["url-shortener", "saas", "link-management", "analytics"],
   "author": "Your Name",

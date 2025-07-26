@@ -11,14 +11,22 @@ export const corsConfig = cors({
     const allowedOrigins = [
       process.env.FRONTEND_URL || 'http://localhost:5173',
       'http://localhost:3000',
+      'http://localhost:5173',
       'https://yourdomain.com' // Add your production domains
     ];
+
+    // Parse CORS_ORIGINS from environment if available
+    if (process.env.CORS_ORIGINS) {
+      const envOrigins = process.env.CORS_ORIGINS.split(',').map(origin => origin.trim());
+      allowedOrigins.push(...envOrigins);
+    }
     
     // In production, be more strict
     if (process.env.NODE_ENV === 'production') {
       if (allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
+        console.log(`❌ CORS blocked origin: ${origin}`);
         callback(new Error('Not allowed by CORS'));
       }
     } else {
