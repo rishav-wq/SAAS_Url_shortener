@@ -60,6 +60,23 @@ app.use('/api/payments', paymentRoutes); // Uses general rate limiting
 // This handles the root path with a short ID parameter
 app.get('/:shortId', accessLimiter, redirectLink);
 
+// Serve static files in production (for Railway deployment)
+if (process.env.NODE_ENV === 'production') {
+    const frontendDistPath = path.join(process.cwd(), '../frontend/dist');
+    if (fs.existsSync(frontendDistPath)) {
+        app.use(express.static(frontendDistPath));
+        
+        // Handle React Router - serve index.html for all non-API routes
+        app.get('*', (req, res) => {
+            // Skip if it's an API route or shortId redirect
+            if (req.path.startsWith('/api/') || req.path.match(/^\/[a-zA-Z0-9_-]{6}$/)) {
+                return res.status(404).json({ error: 'Route not found' });
+            }
+            res.sendFile(path.join(frontendDistPath, 'index.html'));
+        });
+    }
+}
+
 // Global Error Handling Middleware (enhanced)
 app.use((err, req, res, next) => {
     console.error(`[${new Date().toISOString()}] Error:`, err.stack);

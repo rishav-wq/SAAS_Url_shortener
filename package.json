@@ -1,0 +1,17 @@
+{
+  "name": "saas-url-shortener",
+  "version": "1.0.0",
+  "description": "Professional SaaS Link Shortener with Analytics",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install",
+    "start": "cd backend && npm start",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "postinstall": "npm run build"
+  },
+  "keywords": ["url-shortener", "saas", "link-management", "analytics"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
