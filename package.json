@@ -3,25 +3,17 @@
   "version": "1.0.0",
   "description": "Professional SaaS Link Shortener with Analytics",
   "main": "backend/server.js",
-  "type": "module",
+  "private": true,
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "echo 'Building application...' && npm run build-all",
-    "build-all": "cd frontend && npm install && npm run build && cd ../backend && npm install",
-    "start": "cd backend && npm start",
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
-    "heroku-postbuild": "npm run build-all"
+    "start": "node backend/server.js",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
   },
   "keywords": ["url-shortener", "saas", "link-management", "analytics"],
   "author": "Your Name",
   "license": "MIT",
-  "dependencies": {
-    "express": "^4.18.2",
-    "dotenv": "^16.3.1"
-  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
